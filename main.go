@@ -35,6 +35,7 @@ The commands are:
         list        List channels with data
         help        Show this list
         monitor     Periodically monitor for posted scores
+        scan 	    Scan a channel for updates
         rescan      Do a full rescan of a channel (in case of defects or edits)
         serve       Start a local webserver to show stats and a leaderboard
         stats       Print stats to standard output to use for custom graphs
@@ -129,6 +130,22 @@ func main() {
 			log.Fatal(err)
 		}
 		keepAlive()
+	case "scan":
+		cmd := flag.NewFlagSet("scan", flag.ExitOnError)
+		channel := cmd.String("channel", "", "Channel ID to scan")
+		cmd.Parse(args[1:])
+		if *channel == "" {
+			cmd.Usage()
+			os.Exit(1)
+		}
+		dc, err := initDiscordConnection()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = dc.channelTick(*channel)
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "rescan":
 		cmd := flag.NewFlagSet("rescan", flag.ExitOnError)
 		channel := cmd.String("channel", "", "Channel ID to scan")
