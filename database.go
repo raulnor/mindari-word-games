@@ -90,7 +90,7 @@ func addScores(scores []Score) error {
 	if err != nil {
 		return fmt.Errorf("failed to prepare puzzle statement: %v", err)
 	}
-	defer score_stmt.Close()
+	defer puzzle_stmt.Close()
 
 	tx, err := db.Begin()
 	if err != nil {
