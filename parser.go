@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -18,6 +19,7 @@ type Score struct {
 	Score      string
 	Win        string
 	Hardmode   string
+	Content    string
 }
 
 // Parse a score from a text message (string)
@@ -63,9 +65,6 @@ func ParseScoreFromContent(content string) (*Score, error) {
 			}
 			break // patterns
 		}
-	}
-	if captures == nil {
-		return nil, fmt.Errorf("message did not parse: %s", content)
 	}
 	switch {
 	case game == "Wordle" || game == "Tradle":
@@ -136,8 +135,11 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		match := re.FindStringSubmatch(content)
 		minutes, _ := strconv.Atoi(match[1])
 		seconds, _ := strconv.Atoi(match[2])
-		score_value = strconv.Itoa(minutes * 60 + seconds)
+		score_value = strconv.Itoa(minutes*60 + seconds)
 		win = "Y"
+	default:
+		score_value = ""
+		game = "Unknown"
 	}
 
 	score := Score{
@@ -146,23 +148,31 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		Hardmode:   hardmode,
 		Score:      score_value,
 		Win:        win,
+		Content:    content,
 	}
 	return &score, nil
 }
 
+var ErrNotScore = errors.New("message is not a score")
+
 // Parse Discord message to extract score
 func ParseScoreFromMessage(msg *discordgo.Message) (*Score, error) {
-	if msg.Type != 0 {
-		return nil, fmt.Errorf("message is not a score")
+	switch msg.Type {
+	case discordgo.MessageTypeDefault,
+		discordgo.MessageTypeReply:
+		score, err := ParseScoreFromContent(msg.Content)
+		if err != nil {
+			return nil, err
+		}
+		score.ID = msg.ID
+		score.ChannelID = msg.ChannelID
+		score.Username = msg.Author.Username
+		return score, nil
+	case discordgo.MessageTypeChatInputCommand:
+		return nil, ErrNotScore
+	default:
+		return nil, fmt.Errorf("Unhandled message type = %d", msg.Type)
 	}
-	score, err := ParseScoreFromContent(msg.Content)
-	if err != nil {
-		return nil, err
-	}
-	score.ID = msg.ID
-	score.ChannelID = msg.ChannelID
-	score.Username = msg.Author.Username
-	return score, nil
 }
 
 func ParseScores(messages []*discordgo.Message) ([]Score, error) {
@@ -170,7 +180,9 @@ func ParseScores(messages []*discordgo.Message) ([]Score, error) {
 	for _, msg := range messages {
 		score, err := ParseScoreFromMessage(msg)
 		if err != nil {
-			logPrintln("%v", err)
+			if err != ErrNotScore {
+				logPrintln("%v", err)
+			}
 			continue
 		}
 		scores = append(scores, *score)

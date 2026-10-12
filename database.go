@@ -24,6 +24,7 @@ func initDatabase() (*sql.DB, error) {
 			score TEXT,
 			win TEXT,
 			hardmode TEXT,
+			content TEXT,
 			UNIQUE (username, game, game_number, score)
 		)
 	`)
@@ -76,8 +77,8 @@ func addScores(scores []Score) error {
 		return err
 	}
 	score_stmt, err := db.Prepare(`
-		INSERT OR REPLACE INTO scores (id, channel_id, username, game, game_number, score, win, hardmode)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT OR REPLACE INTO scores (id, channel_id, username, game, game_number, score, win, hardmode, content)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to prepare score statement: %v", err)
@@ -97,7 +98,7 @@ func addScores(scores []Score) error {
 		return fmt.Errorf("failed to begin transaction: %v", err)
 	}
 	for _, score := range scores {
-		_, err := tx.Stmt(score_stmt).Exec(score.ID, score.ChannelID, score.Username, score.Game, score.GameNumber, score.Score, score.Win, score.Hardmode)
+		_, err := tx.Stmt(score_stmt).Exec(score.ID, score.ChannelID, score.Username, score.Game, score.GameNumber, score.Score, score.Win, score.Hardmode, score.Content)
 		if err != nil {
 			tx.Rollback()
 			return fmt.Errorf("failed to add score %s: %v", score.ID, err)
@@ -126,13 +127,14 @@ func getScoreIDRange() (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	var oldest string
-	var newest string
+	var oldest, newest sql.NullString
 	err = db.QueryRow("SELECT MIN(id), MAX(id) FROM scores").Scan(&oldest, &newest)
 	if err != nil {
 		return "", "", err
+	} else if !oldest.Valid || !newest.Valid {
+		return "", "", nil // table is empty
 	} else {
-		return oldest, newest, nil
+		return oldest.String, newest.String, nil
 	}
 }
 

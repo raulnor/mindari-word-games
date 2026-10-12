@@ -83,32 +83,32 @@ func TestScoreParser(t *testing.T) {
 			input:  "Strands #449\n“Body language”\n💡🔵🔵🔵\n💡🔵🟡🔵\n🔵",
 			output: Score{Game: "Strands", Score: "2", GameNumber: "449", Win: "Y"},
 		},
-		{ 
-			input: "🦡 Animal #770 🐮\nI figured it out in 9 guesses!\n🟧🟧🟧🟧🟩🟩🟩🟩🟩\n🔥 1 | Avg. Guesses: 6.9\n\nhttps://metazooa.com/\n#metazooa",
+		{
+			input:  "🦡 Animal #770 🐮\nI figured it out in 9 guesses!\n🟧🟧🟧🟧🟩🟩🟩🟩🟩\n🔥 1 | Avg. Guesses: 6.9\n\nhttps://metazooa.com/\n#metazooa",
 			output: Score{Game: "Animal", Score: "9", GameNumber: "770", Win: "Y"},
 		},
-		{ 
-			input: "🐹 Animal #772 🐃\nI was stumped by today's game!\n🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟧🟥🟥🟧🟧🟧🟥🟥🟥\n🔥 0 | Avg. Guesses: 0\n\nhttps://metazooa.com\n#metazooa",
+		{
+			input:  "🐹 Animal #772 🐃\nI was stumped by today's game!\n🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟧🟥🟥🟧🟧🟧🟥🟥🟥\n🔥 0 | Avg. Guesses: 0\n\nhttps://metazooa.com\n#metazooa",
 			output: Score{Game: "Animal", Score: "20", GameNumber: "772", Win: "N"},
 		},
-		{ 
-			input: "Zip #175 | 0:11 🏁\nWith 1 backtrack 🛑\nlnkd.in/zip.",
+		{
+			input:  "Zip #175 | 0:11 🏁\nWith 1 backtrack 🛑\nlnkd.in/zip.",
 			output: Score{Game: "Zip", Score: "11", GameNumber: "175", Win: "Y"},
 		},
-		{ 
-			input: "Zip #176 | 0:10 and flawless 🏁\nWith no backtracks 🟢\nlnkd.in/zip.",
+		{
+			input:  "Zip #176 | 0:10 and flawless 🏁\nWith no backtracks 🟢\nlnkd.in/zip.",
 			output: Score{Game: "Zip", Score: "10", GameNumber: "176", Win: "Y"},
 		},
-		{ 
-			input: "Zip #176 | 1:43 🏁\nlnkd.in/zip.",
+		{
+			input:  "Zip #176 | 1:43 🏁\nlnkd.in/zip.",
 			output: Score{Game: "Zip", Score: "103", GameNumber: "176", Win: "Y"},
 		},
 		{
-			input: "Mini Sudoku #28 | 0:54 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
+			input:  "Mini Sudoku #28 | 0:54 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
 			output: Score{Game: "Mini Sudoku", Score: "54", GameNumber: "28", Win: "Y"},
 		},
 		{
-			input: "Mini Sudoku #31 | 3:16 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
+			input:  "Mini Sudoku #31 | 3:16 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
 			output: Score{Game: "Mini Sudoku", Score: "196", GameNumber: "31", Win: "Y"},
 		},
 	}

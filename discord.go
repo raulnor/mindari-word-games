@@ -376,7 +376,14 @@ func readChannelInfo(channelID string) (*discordgo.Channel, error) {
 	var channel discordgo.Channel
 	row := db.QueryRow("SELECT channel_id, guild_id, name FROM channels WHERE channel_id = ?", channelID)
 	err = row.Scan(&channel.ID, &channel.GuildID, &channel.Name)
-	if err == sql.ErrNoRows && discordConnection != nil {
+	if err == sql.ErrNoRows {
+		if discordConnection == nil {
+			dc, err := initDiscordConnection()
+			if err != nil {
+				return nil, err
+			}
+			discordConnection = dc
+		}
 		fetched_channel, err := discordConnection.fetchChannelInfo(channelID)
 		return fetched_channel, err
 	} else if err != nil {

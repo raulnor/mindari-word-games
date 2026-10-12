@@ -93,7 +93,7 @@ func channelHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(games) == 0 {
 		http.Error(w, "No games found for channel", http.StatusNotFound)
-    	return
+		return
 	}
 	game := params.Get("game")
 	if game == "" {
@@ -216,7 +216,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if len(games) == 0 {
 		http.Error(w, "No games found for user", http.StatusNotFound)
-    	return
+		return
 	}
 	game := params.Get("game")
 	if game == "" {
