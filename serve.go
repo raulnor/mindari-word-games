@@ -315,10 +315,36 @@ func attendanceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Handler for /unknown
+func unknownHandler(w http.ResponseWriter, r *http.Request) {
+	scores, err := getUnknownList()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if len(scores) == 0 {
+		http.Error(w, "No unknown games found", http.StatusNotFound)
+		return
+	}
+	err = tmpl.ExecuteTemplate(w, "unknown.tmpl", struct {
+		Scores 	[]Score
+		Style 	template.CSS
+	}{
+		Scores: scores,
+		Style:  template.CSS(stylesheet),
+	})
+	if err != nil {
+		logPrintln("%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func startWebServer(addr string) error {
 	http.HandleFunc("/attendance", attendanceHandler)
 	http.HandleFunc("/channel", channelHandler)
 	http.HandleFunc("/stats", statsHandler)
+	http.HandleFunc("/unknown", unknownHandler)
 	http.HandleFunc("/user", userHandler)
 	http.HandleFunc("/", rootHandler)
 	return http.ListenAndServe(addr, nil)

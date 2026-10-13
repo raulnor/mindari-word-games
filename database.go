@@ -392,3 +392,38 @@ func getAttendanceStatsForMonth(guildID string, month string) ([]AttendanceStats
 	}
 	return stats, nil
 }
+
+
+func getUnknownList() ([]Score, error) {
+	db, err := getDatabase()
+	if err != nil {
+		return nil, err
+	}
+	sql := `
+		SELECT id, channel_id, username, content
+		FROM scores s
+		WHERE s.game = 'Unknown'
+	`
+	rows, err := db.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+	var scores []Score
+	for rows.Next() {
+		var score Score
+		err := rows.Scan(
+			&score.ID,
+			&score.ChannelID,
+			&score.Username,
+			&score.Score,
+		)
+		if err != nil {
+			return nil, err
+		}
+		scores = append(scores, score)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return scores, nil
+}

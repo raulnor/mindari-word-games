@@ -103,13 +103,16 @@ func getGameList(guildID string, username string, from string, to string) ([]str
 		if err != nil {
 			return nil, err
 		}
-		games = append(games, game)
+		if game != "Unknown" {
+			games = append(games, game)
+		}
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 	return games, nil
 }
+
 
 // Aggregate stats for a game.
 func getStats(game string, guildID string, from string, to string) ([]Stats, error) {
