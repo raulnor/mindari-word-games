@@ -98,6 +98,9 @@ func addScores(scores []Score) error {
 		return fmt.Errorf("failed to begin transaction: %v", err)
 	}
 	for _, score := range scores {
+		if score.Game == "Unknown" {
+			score.GameNumber = score.ID
+		}
 		_, err := tx.Stmt(score_stmt).Exec(score.ID, score.ChannelID, score.Username, score.Game, score.GameNumber, score.Score, score.Win, score.Hardmode, score.Content)
 		if err != nil {
 			tx.Rollback()

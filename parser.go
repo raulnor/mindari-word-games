@@ -43,6 +43,7 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		regexp.MustCompile(`(?s).*(?P<game>Animal) #(?P<game_no>\d+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Zip) #(?P<game_no>\d+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Mini Sudoku) #(?P<game_no>\d+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Queens Ultimate - Daily (?:Max|Mini)) #(?P<game_no>\d+)\n⏱️ (?P<score>[\d:.]+)`),
 	}
 	var captures map[string]string
 	for _, re := range patterns {
@@ -133,9 +134,26 @@ func ParseScoreFromContent(content string) (*Score, error) {
 	case game == "Zip" || game == "Mini Sudoku":
 		re := regexp.MustCompile(`(?s)(\d+):(\d+)`)
 		match := re.FindStringSubmatch(content)
+		if match == nil {
+			score_value = ""
+			break
+		}
 		minutes, _ := strconv.Atoi(match[1])
 		seconds, _ := strconv.Atoi(match[2])
 		score_value = strconv.Itoa(minutes*60 + seconds)
+		win = "Y"
+	case strings.Contains(game, "Queens Ultimate"):
+		re := regexp.MustCompile(`(?s)(\d+):(\d+)\.(\d+)`)
+		match := re.FindStringSubmatch(score_value)
+		if match == nil {
+			score_value = ""
+			break
+		}
+		minutes, _ := strconv.ParseFloat(match[1], 32)
+		seconds, _ := strconv.ParseFloat(match[2], 32)
+		fractional, _ := strconv.ParseFloat(match[3], 32)
+		total := minutes * 60 + seconds + fractional / 100
+		score_value = strconv.FormatFloat(total, 'f', 2, 32)
 		win = "Y"
 	default:
 		score_value = ""
