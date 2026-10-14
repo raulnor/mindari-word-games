@@ -396,7 +396,6 @@ func getAttendanceStatsForMonth(guildID string, month string) ([]AttendanceStats
 	return stats, nil
 }
 
-
 func getUnknownList() ([]Score, error) {
 	db, err := getDatabase()
 	if err != nil {

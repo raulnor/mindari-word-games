@@ -113,7 +113,6 @@ func getGameList(guildID string, username string, from string, to string) ([]str
 	return games, nil
 }
 
-
 // Aggregate stats for a game.
 func getStats(game string, guildID string, from string, to string) ([]Stats, error) {
 	db, err := getDatabase()

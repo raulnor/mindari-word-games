@@ -327,8 +327,8 @@ func unknownHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = tmpl.ExecuteTemplate(w, "unknown.tmpl", struct {
-		Scores 	[]Score
-		Style 	template.CSS
+		Scores []Score
+		Style  template.CSS
 	}{
 		Scores: scores,
 		Style:  template.CSS(stylesheet),

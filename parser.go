@@ -152,7 +152,7 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		minutes, _ := strconv.ParseFloat(match[1], 32)
 		seconds, _ := strconv.ParseFloat(match[2], 32)
 		fractional, _ := strconv.ParseFloat(match[3], 32)
-		total := minutes * 60 + seconds + fractional / 100
+		total := minutes*60 + seconds + fractional/100
 		score_value = strconv.FormatFloat(total, 'f', 2, 32)
 		win = "Y"
 	default:

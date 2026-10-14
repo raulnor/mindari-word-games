@@ -112,11 +112,11 @@ func TestScoreParser(t *testing.T) {
 			output: Score{Game: "Mini Sudoku", Score: "196", GameNumber: "31", Win: "Y"},
 		},
 		{
-			input: "👑 Queens Ultimate - Daily Mini #275\n⏱️ 01:00.25 | 💎 Brilliant\n\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟪⬜🟧\n🟩🟦🟪🟥⬜🟧\n🟩🟦🟪🟥🟥🟧\n🟩🟩🟪🟪🟪🟪\n\nCan you beat my time?\nqueensultimate.com/",
+			input:  "👑 Queens Ultimate - Daily Mini #275\n⏱️ 01:00.25 | 💎 Brilliant\n\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟪⬜🟧\n🟩🟦🟪🟥⬜🟧\n🟩🟦🟪🟥🟥🟧\n🟩🟩🟪🟪🟪🟪\n\nCan you beat my time?\nqueensultimate.com/",
 			output: Score{Game: "Queens Ultimate - Daily Mini", Score: "60.25", GameNumber: "275", Win: "Y"},
-		}, 
+		},
 		{
-			input: "👑 Queens Ultimate - Daily Max #275\n⏱️ 03:10.07 | 💎 Brilliant\n\n🟪🟪🟪🟪🟪🟪\n🟦🟦🟪🟧🟪🟪\n🟦🟦🟧🟧🟪🟪\n🟥🟦🟧🟧🟧🟪\n🟥⬜⬜🟩🟩🟪\n🟥⬜🟩🟩🟩🟪\n\nCan you beat my time?\nqueensultimate.com/max",
+			input:  "👑 Queens Ultimate - Daily Max #275\n⏱️ 03:10.07 | 💎 Brilliant\n\n🟪🟪🟪🟪🟪🟪\n🟦🟦🟪🟧🟪🟪\n🟦🟦🟧🟧🟪🟪\n🟥🟦🟧🟧🟧🟪\n🟥⬜⬜🟩🟩🟪\n🟥⬜🟩🟩🟩🟪\n\nCan you beat my time?\nqueensultimate.com/max",
 			output: Score{Game: "Queens Ultimate - Daily Max", Score: "190.07", GameNumber: "275", Win: "Y"},
 		},
 	}
