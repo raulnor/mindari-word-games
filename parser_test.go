@@ -93,23 +93,23 @@ func TestScoreParser(t *testing.T) {
 		},
 		{
 			input:  "Zip #175 | 0:11 🏁\nWith 1 backtrack 🛑\nlnkd.in/zip.",
-			output: Score{Game: "Zip", Score: "11", GameNumber: "175", Win: "Y"},
+			output: Score{Game: "Zip", Score: "11.00", GameNumber: "175", Win: "Y"},
 		},
 		{
 			input:  "Zip #176 | 0:10 and flawless 🏁\nWith no backtracks 🟢\nlnkd.in/zip.",
-			output: Score{Game: "Zip", Score: "10", GameNumber: "176", Win: "Y"},
+			output: Score{Game: "Zip", Score: "10.00", GameNumber: "176", Win: "Y"},
 		},
 		{
 			input:  "Zip #176 | 1:43 🏁\nlnkd.in/zip.",
-			output: Score{Game: "Zip", Score: "103", GameNumber: "176", Win: "Y"},
+			output: Score{Game: "Zip", Score: "103.00", GameNumber: "176", Win: "Y"},
 		},
 		{
 			input:  "Mini Sudoku #28 | 0:54 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
-			output: Score{Game: "Mini Sudoku", Score: "54", GameNumber: "28", Win: "Y"},
+			output: Score{Game: "Mini Sudoku", Score: "54.00", GameNumber: "28", Win: "Y"},
 		},
 		{
 			input:  "Mini Sudoku #31 | 3:16 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
-			output: Score{Game: "Mini Sudoku", Score: "196", GameNumber: "31", Win: "Y"},
+			output: Score{Game: "Mini Sudoku", Score: "196.00", GameNumber: "31", Win: "Y"},
 		},
 		{
 			input:  "👑 Queens Ultimate - Daily Mini #275\n⏱️ 01:00.25 | 💎 Brilliant\n\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟪⬜🟧\n🟩🟦🟪🟥⬜🟧\n🟩🟦🟪🟥🟥🟧\n🟩🟩🟪🟪🟪🟪\n\nCan you beat my time?\nqueensultimate.com/",

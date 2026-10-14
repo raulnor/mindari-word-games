@@ -41,8 +41,8 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		regexp.MustCompile(`(?s)(?P<game>Tradle) #(?P<game_no>\d+).*(?P<score>[123456X])\/6`),
 		regexp.MustCompile(`(?s)(?P<game>Strands) #(?P<game_no>\d+).*`),
 		regexp.MustCompile(`(?s).*(?P<game>Animal) #(?P<game_no>\d+).*`),
-		regexp.MustCompile(`(?s)(?P<game>Zip) #(?P<game_no>\d+).*`),
-		regexp.MustCompile(`(?s)(?P<game>Mini Sudoku) #(?P<game_no>\d+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Zip) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Mini Sudoku) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Queens Ultimate - Daily (?:Max|Mini)) #(?P<game_no>\d+)\n⏱️ (?P<score>[\d:.]+)`),
 	}
 	var captures map[string]string
@@ -131,29 +131,13 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		} else {
 			win = "Y"
 		}
-	case game == "Zip" || game == "Mini Sudoku":
-		re := regexp.MustCompile(`(?s)(\d+):(\d+)`)
-		match := re.FindStringSubmatch(content)
-		if match == nil {
+	case game == "Zip" || game == "Mini Sudoku" || strings.Contains(game, "Queens Ultimate"):
+		duration, err := parseSecondsFromString(score_value)
+		if err != nil {
 			score_value = ""
 			break
 		}
-		minutes, _ := strconv.Atoi(match[1])
-		seconds, _ := strconv.Atoi(match[2])
-		score_value = strconv.Itoa(minutes*60 + seconds)
-		win = "Y"
-	case strings.Contains(game, "Queens Ultimate"):
-		re := regexp.MustCompile(`(?s)(\d+):(\d+)\.(\d+)`)
-		match := re.FindStringSubmatch(score_value)
-		if match == nil {
-			score_value = ""
-			break
-		}
-		minutes, _ := strconv.ParseFloat(match[1], 32)
-		seconds, _ := strconv.ParseFloat(match[2], 32)
-		fractional, _ := strconv.ParseFloat(match[3], 32)
-		total := minutes*60 + seconds + fractional/100
-		score_value = strconv.FormatFloat(total, 'f', 2, 32)
+		score_value = strconv.FormatFloat(duration, 'f', 2, 64)
 		win = "Y"
 	default:
 		score_value = ""
@@ -206,4 +190,24 @@ func ParseScores(messages []*discordgo.Message) ([]Score, error) {
 		scores = append(scores, *score)
 	}
 	return scores, nil
+}
+
+var parseDurationRegex = regexp.MustCompile(`(\d+):(\d+\.?\d*)`)
+var ErrNotDuration = errors.New("input is not a duration")
+
+func parseSecondsFromString(input string) (float64, error) {
+	match := parseDurationRegex.FindStringSubmatch(input)
+	if match == nil {
+		return 0, ErrNotDuration
+	}
+	minutes, err := strconv.ParseFloat(match[1], 64)
+	if err != nil {
+		return 0, err
+	}
+	seconds, err := strconv.ParseFloat(match[2], 64)
+	if err != nil {
+		return 0, err
+	}
+	total := minutes*60 + seconds
+	return total, nil
 }
