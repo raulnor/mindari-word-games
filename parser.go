@@ -43,6 +43,10 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		regexp.MustCompile(`(?s).*(?P<game>Animal) #(?P<game_no>\d+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Zip) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Mini Sudoku) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Crossclimb) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Pinpoint) #(?P<game_no>\d+) \| (?P<score>\d+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Queens) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
+		regexp.MustCompile(`(?s)(?P<game>Tango) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Queens Ultimate - Daily (?:Max|Mini)) #(?P<game_no>\d+)\n⏱️ (?P<score>[\d:.]+)`),
 	}
 	var captures map[string]string
@@ -131,7 +135,7 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		} else {
 			win = "Y"
 		}
-	case game == "Zip" || game == "Mini Sudoku" || strings.Contains(game, "Queens Ultimate"):
+	case game == "Zip" || game == "Mini Sudoku" || game == "Crossclimb" || game == "Queens" || game == "Tango" || strings.Contains(game, "Queens Ultimate"):
 		duration, err := parseSecondsFromString(score_value)
 		if err != nil {
 			score_value = ""
@@ -139,7 +143,8 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		}
 		score_value = strconv.FormatFloat(duration, 'f', 2, 64)
 		win = "Y"
-	default:
+	}
+	if game == "" {
 		score_value = ""
 		game = "Unknown"
 	}
