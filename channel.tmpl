@@ -47,9 +47,9 @@
                 <tr>
                     <td><a href="/user?name={{.Username}}&game={{$.CurrentGame}}&from={{$.DateStart}}&to={{$.DateEnd}}">{{.Username}}</a></td>
                     <td>{{.Count}}</td>
-                    <td>{{.Lowest}}</td>
-                    <td>{{ printf "%0.2f" .Average }}</td>
-                    <td>{{.Highest}}</td>
+                    <td>{{formatScoreByGame .Lowest $.CurrentGame}}</td>
+                    <td>{{formatScoreByGame .Average $.CurrentGame}}</td>
+                    <td>{{formatScoreByGame .Highest $.CurrentGame}}</td>
                 </tr>
                 {{end}}
             </tbody>

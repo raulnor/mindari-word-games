@@ -26,7 +26,7 @@
                 {{range .Scores}}
                 <tr>
                     <td><a href="/user?name={{.Username}}">{{.Username}}</a></td>
-                    <td>{{.Score}}</td>
+                    <td>{{formatScoreByGame .Score .Game }}</td>
                 </tr>
                 {{end}}
             </tbody>

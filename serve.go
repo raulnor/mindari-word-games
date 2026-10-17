@@ -4,12 +4,13 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
-	"strings"
 )
 
 //go:embed *.tmpl
 var templateFS embed.FS
-var tmpl = template.Must(template.ParseFS(templateFS, "*.tmpl"))
+var tmpl = template.Must(template.New("").Funcs(template.FuncMap{
+	"formatScoreByGame": formatScoreByGame,
+}).ParseFS(templateFS, "*.tmpl"))
 
 //go:embed style.css
 var stylesheet string
@@ -232,13 +233,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	var barMax int
-	switch {
-	case strings.Contains(game, "Octordle"):
-		barMax = 100
-	default:
-		barMax = 7
-	}
+	barMax := barMaxForScoresByGame(scores, game)
 	err = tmpl.ExecuteTemplate(w, "user.tmpl", struct {
 		Username    string
 		BarMax      int

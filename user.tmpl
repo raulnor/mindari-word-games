@@ -45,7 +45,7 @@
                 {{range .Scores}}
                 <tr>
                     <td>{{.GameNumber}}</td>
-                    <td>{{.Score}}</td>
+                    <td>{{formatScoreByGame .Score $.CurrentGame}}</td>
                     <td>
                     <div class="bar-container">
                         {{ if (eq .Win "Y") }}
