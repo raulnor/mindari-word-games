@@ -120,27 +120,27 @@ func TestScoreParser(t *testing.T) {
 			output: Score{Game: "Queens Ultimate - Daily Max", Score: "190.07", GameNumber: "275", Win: "Y"},
 		},
 		{
-			input: "Crossclimb #497 | 0:59 Fill order: 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 🔼 🔽 🪜 lnkd.in/crossclimb.",
+			input:  "Crossclimb #497 | 0:59 Fill order: 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 🔼 🔽 🪜 lnkd.in/crossclimb.",
 			output: Score{Game: "Crossclimb", Score: "59.00", GameNumber: "497", Win: "Y"},
 		},
 		{
-			input: "Crossclimb #496 | 1:21 Fill order: 2️⃣ 1️⃣ 3️⃣ 5️⃣ 4️⃣ 🔼 🔽 🪜 lnkd.in/crossclimb.",
+			input:  "Crossclimb #496 | 1:21 Fill order: 2️⃣ 1️⃣ 3️⃣ 5️⃣ 4️⃣ 🔼 🔽 🪜 lnkd.in/crossclimb.",
 			output: Score{Game: "Crossclimb", Score: "81.00", GameNumber: "496", Win: "Y"},
 		},
 		{
-			input: "Pinpoint #497 | 3 guesses 1️⃣ | 4% match 2️⃣ | 4% match 3️⃣ | 100% match 📌 lnkd.in/pinpoint.",
+			input:  "Pinpoint #497 | 3 guesses 1️⃣ | 4% match 2️⃣ | 4% match 3️⃣ | 100% match 📌 lnkd.in/pinpoint.",
 			output: Score{Game: "Pinpoint", Score: "3", GameNumber: "497"},
 		},
 		{
-			input: "Pinpoint #496 | 1 guess 1️⃣ | 100% match 📌 lnkd.in/pinpoint.",
+			input:  "Pinpoint #496 | 1 guess 1️⃣ | 100% match 📌 lnkd.in/pinpoint.",
 			output: Score{Game: "Pinpoint", Score: "1", GameNumber: "496"},
 		},
 		{
-			input: "Queens #496 | 1:05 and flawless First 👑s: 🟧 ⬜ 🟦 lnkd.in/queens.",
+			input:  "Queens #496 | 1:05 and flawless First 👑s: 🟧 ⬜ 🟦 lnkd.in/queens.",
 			output: Score{Game: "Queens", Score: "65.00", GameNumber: "496", Win: "Y"},
 		},
 		{
-			input: "Tango #336 | 1:05 and flawless First 5 placements: 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 5️⃣🟨4️⃣3️⃣1️⃣2️⃣ 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 lnkd.in/tango.",
+			input:  "Tango #336 | 1:05 and flawless First 5 placements: 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 5️⃣🟨4️⃣3️⃣1️⃣2️⃣ 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 lnkd.in/tango.",
 			output: Score{Game: "Tango", Score: "65.00", GameNumber: "336", Win: "Y"},
 		},
 	}

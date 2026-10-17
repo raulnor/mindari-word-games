@@ -1,0 +1,38 @@
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{.Date}}</title>
+        <style>{{.Style}}</style>
+    </head>
+    <body>
+        <h1><a href="/" style="text-decoration: none">&lt;</a>{{.Date}}</h1>
+        <p>
+            <a href="/today?d={{.PrevDate}}">&larr; {{.PrevDate}}</a>
+            {{if .NextDate}}
+            &nbsp;|&nbsp;
+            <a href="/today?d={{.NextDate}}">{{.NextDate}} &rarr;</a>
+            {{end}}
+        </p>
+        {{range .Games}}
+        <h2>{{.Game}}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Scores}}
+                <tr>
+                    <td><a href="/user?name={{.Username}}">{{.Username}}</a></td>
+                    <td>{{.Score}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        {{else}}
+        <p>No scores posted for this day.</p>
+        {{end}}
+    </body>
+</html>

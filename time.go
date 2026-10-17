@@ -41,6 +41,10 @@ func defaultDateEnd() string {
 	return t1.Format("2006-01-02")
 }
 
+func getCurrentDate() string {
+	return time.Now().Format("2006-01-02")
+}
+
 func getCurrentMonth() string {
 	return time.Now().Format("2006-01")
 }
@@ -73,4 +77,17 @@ func formatMonthDisplay(monthStr string) string {
 		return monthStr
 	}
 	return t.Format("January 2006")
+}
+
+func isStringDate(input string) bool {
+	_, err := time.Parse("2006-01-02", input)
+	return err == nil
+}
+
+func shiftDate(date string, days int) string {
+	t, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return date
+	}
+	return t.AddDate(0, 0, days).Format("2006-01-02")
 }

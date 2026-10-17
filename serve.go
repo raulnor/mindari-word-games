@@ -315,6 +315,42 @@ func attendanceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Handler for /today
+func todayHandler(w http.ResponseWriter, r *http.Request) {
+	date := r.URL.Query().Get("d")
+	today := getCurrentDate()
+	if !isStringDate(date) {
+		date = today
+	}
+	games, err := getGamesByDate(date)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	nextDate := shiftDate(date, 1)
+	if date >= today {
+		nextDate = ""
+	}
+	err = tmpl.ExecuteTemplate(w, "today.tmpl", struct {
+		Date     string
+		PrevDate string
+		NextDate string
+		Games    []DayGame
+		Style    template.CSS
+	}{
+		Date:     date,
+		PrevDate: shiftDate(date, -1),
+		NextDate: nextDate,
+		Games:    games,
+		Style:    template.CSS(stylesheet),
+	})
+	if err != nil {
+		logPrintln("%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // Handler for /unknown
 func unknownHandler(w http.ResponseWriter, r *http.Request) {
 	scores, err := getUnknownList()
@@ -346,6 +382,7 @@ func startWebServer(addr string) error {
 	http.HandleFunc("/stats", statsHandler)
 	http.HandleFunc("/unknown", unknownHandler)
 	http.HandleFunc("/user", userHandler)
+	http.HandleFunc("/today", todayHandler)
 	http.HandleFunc("/", rootHandler)
 	return http.ListenAndServe(addr, nil)
 }

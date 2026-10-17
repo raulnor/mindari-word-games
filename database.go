@@ -174,6 +174,8 @@ func GetRecentScores() ([]Score, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get recent scores: %v", err)
 	}
+	defer rows.Close()
+
 	var scores []Score
 	for rows.Next() {
 		var score Score
@@ -252,6 +254,8 @@ func findByChannelOrUsername(query string) ([]SearchResult, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get users: %v", err)
 	}
+	defer rows.Close()
+
 	for rows.Next() {
 		var result SearchResult
 		err := rows.Scan(
@@ -290,6 +294,8 @@ func getScoresByUser(game string, username string, from string, to string) ([]Sc
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	var scores []Score
 	for rows.Next() {
 		var score Score
@@ -332,6 +338,8 @@ func getFriendNames(username string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	var friends []string
 	for rows.Next() {
 		var friend string
@@ -396,6 +404,65 @@ func getAttendanceStatsForMonth(guildID string, month string) ([]AttendanceStats
 	return stats, nil
 }
 
+type DayGame struct {
+	Game   string
+	Scores []Score
+}
+
+func getGamesByDate(date string) ([]DayGame, error) {
+	scores, err := getScoresByDate(date)
+	if err != nil {
+		return nil, err
+	}
+	var games []DayGame
+	for _, s := range scores {
+		if len(games) == 0 || games[len(games)-1].Game != s.Game {
+			games = append(games, DayGame{Game: s.Game})
+		}
+		g := &games[len(games)-1]
+		g.Scores = append(g.Scores, s)
+	}
+	return games, nil
+}
+
+func getScoresByDate(date string) ([]Score, error) {
+	db, err := getDatabase()
+	if err != nil {
+		return nil, err
+	}
+	sql := `
+		SELECT id, channel_id, username, s.game, score
+		FROM scores s
+		JOIN puzzles p ON s.game = p.game AND s.game_number = p.game_number
+		WHERE p.date = ? AND p.game <> 'Unknown'
+		ORDER BY s.game, CAST(score AS REAL)
+	`
+	rows, err := db.Query(sql, date)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var scores []Score
+	for rows.Next() {
+		var score Score
+		err := rows.Scan(
+			&score.ID,
+			&score.ChannelID,
+			&score.Username,
+			&score.Game,
+			&score.Score,
+		)
+		if err != nil {
+			return nil, err
+		}
+		scores = append(scores, score)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return scores, nil
+}
+
 func getUnknownList() ([]Score, error) {
 	db, err := getDatabase()
 	if err != nil {
@@ -410,6 +477,8 @@ func getUnknownList() ([]Score, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	var scores []Score
 	for rows.Next() {
 		var score Score
