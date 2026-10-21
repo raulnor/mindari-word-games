@@ -321,7 +321,12 @@ func (dc *DiscordConnection) startDiscordMonitor() error {
 			logPrintln("addScores error: %v, %v", err, m)
 			return
 		}
-		logPrintln("Added score from bot: %s %s %s %s", score.Username, score.Game, score.GameNumber, score.Score)
+		streak, err := GetStreakByUserAndGame(score.Username, score.Game)
+		if err != nil {
+			logPrintln("get streak error: %v, %v", err, m)
+			streak = &GameStreak{}
+		}
+		logPrintln("Added score from bot: %s %s %s %s (streak: %d, %d)", score.Username, score.Game, score.GameNumber, score.Score, streak.Current, streak.Longest)
 		dc.startChannelMonitor(m.ChannelID)
 	})
 	dc.onDiscordConnectionClose(func() error {
