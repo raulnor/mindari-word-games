@@ -28,6 +28,24 @@ func dateFromDiscordSnowflake(snowflake string) (string, error) {
 	return dateStr, nil
 }
 
+var discordEpoch = time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC)
+
+func timeFromDiscordSnowflake(snowflake string) (time.Time, error) {
+	id, err := strconv.ParseInt(snowflake, 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.UnixMilli(discordEpoch.UnixMilli() + (id >> 22)), nil
+}
+
+func timestampFromDiscordSnowflake(snowflake string) string {
+	t, err := timeFromDiscordSnowflake(snowflake)
+	if err != nil {
+		return snowflake
+	}
+	return t.Format("2006-01-02 15:04:05")
+}
+
 func defaultDateStart() string {
 	t := time.Now()
 	t0 := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, t.Location())

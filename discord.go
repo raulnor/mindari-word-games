@@ -227,7 +227,15 @@ func (dc *DiscordConnection) scanChannel(options Options) error {
 	}
 	count := len(messages)
 	if count == 0 {
-		logPrintln("No new records found.")
+		if options.Before != "" && options.After != "" {
+			logPrintln("No new records found between %s and %s.", timestampFromDiscordSnowflake(options.After), timestampFromDiscordSnowflake(options.Before))
+		} else if options.Before != "" {
+			logPrintln("No new records found before %s.", timestampFromDiscordSnowflake(options.Before))
+		} else if options.After != "" {
+			logPrintln("No new records found after %s.", timestampFromDiscordSnowflake(options.After))
+		} else {
+			logPrintln("No new records found.")
+		}
 		return nil
 	}
 	scores, err := ParseScores(messages)
@@ -238,7 +246,9 @@ func (dc *DiscordConnection) scanChannel(options Options) error {
 	if err != nil {
 		return err
 	}
-	logPrintln("%d records updated (%s - %s)", count, messages[0].ID, messages[len(messages)-1].ID)
+	tsAfter := timestampFromDiscordSnowflake(messages[len(messages)-1].ID)
+	tsBefore := timestampFromDiscordSnowflake(messages[0].ID)
+	logPrintln("%d records updated between %s and %s.", count, tsAfter, tsBefore)
 	// Check other pages
 	// Unsure if assumption about message order is safe
 	if options.Before != "" || options.Before == "" && options.After == "" {
@@ -311,6 +321,11 @@ func (dc *DiscordConnection) startDiscordMonitor() error {
 	logPrintln("Starting monitor...")
 	// Called when a message is created in a channel
 	dc.Session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		err := dc.channelTick(m.ChannelID)
+		if err != nil {
+			logPrintln("channelTick error: %v, %v", err, m)
+			return
+		}
 		score, err := ParseScoreFromMessage(m.Message)
 		if err != nil {
 			logPrintln("Parser error: %v, %v", err, m)
@@ -323,7 +338,7 @@ func (dc *DiscordConnection) startDiscordMonitor() error {
 		}
 		streak, err := GetStreakByUserAndGame(score.Username, score.Game)
 		if err != nil {
-			logPrintln("get streak error: %v, %v", err, m)
+			logPrintln("GetStreakByUserAndGame error: %v, %v", err, m)
 			streak = &GameStreak{}
 		}
 		logPrintln("Added score from bot: %s %s %s %s (streak: %d, %d)", score.Username, score.Game, score.GameNumber, score.Score, streak.Current, streak.Longest)
