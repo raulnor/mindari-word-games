@@ -346,6 +346,36 @@ func todayHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Handler for /user/{username}/streaks
+func streaksByUserHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.PathValue("username")
+	if username == "" {
+		http.Error(w, "Username Required", http.StatusBadRequest)
+		return
+	}
+	streaks, err := GetStreaksByUser(username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.ExecuteTemplate(w, "streaks.tmpl", struct {
+		AppFullName string
+		Streaks     []GameStreak
+		Style       template.CSS
+		Username    string
+	}{
+		AppFullName: appFullName(),
+		Streaks:     streaks,
+		Style:       template.CSS(stylesheet),
+		Username:    username,
+	})
+	if err != nil {
+		logPrintln("%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // Handler for /unknown
 func unknownHandler(w http.ResponseWriter, r *http.Request) {
 	scores, err := getUnknownList()
@@ -377,6 +407,7 @@ func startWebServer(addr string) error {
 	http.HandleFunc("/stats", statsHandler)
 	http.HandleFunc("/unknown", unknownHandler)
 	http.HandleFunc("/user", userHandler)
+	http.HandleFunc("/user/{username}/streaks", streaksByUserHandler)
 	http.HandleFunc("/today", todayHandler)
 	http.HandleFunc("/", rootHandler)
 	return http.ListenAndServe(addr, nil)

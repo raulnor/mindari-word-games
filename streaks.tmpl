@@ -1,0 +1,34 @@
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{.AppFullName}} | Streaks</title>
+        <style>
+            {{.Style}}
+        </style>
+    </head>
+    <body>
+        <h1><a href="/" style="text-decoration: none">&lt;</a>Game History</h1>
+        <div style="margin: 10px 0;">
+            <a href="/user?name={{.Username}}">Games</a>
+            <b>Streaks</b>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Game</th>
+                    <th>Longest</th>
+                    <th>Current</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Streaks}}
+                <tr>
+                    <td>{{.Game}}</td>
+                    <td>{{.Longest}}</td>
+                    <td>{{.Current}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </body>
+</html>
