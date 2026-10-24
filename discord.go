@@ -72,6 +72,32 @@ func (dc *DiscordConnection) onDiscordConnectionClose(handler func() error) {
 	dc.onCloseHandlers = append(dc.onCloseHandlers, handler)
 }
 
+// Fires when the chatbot sees a message
+func (dc *DiscordConnection) onDiscordMessageCreate(_ *discordgo.Session, m *discordgo.MessageCreate) {
+	err := dc.channelTick(m.ChannelID)
+	if err != nil {
+		logPrintln("channelTick error: %v, %v", err, m)
+		return
+	}
+	score, err := ParseScoreFromMessage(m.Message)
+	if err != nil {
+		logPrintln("Parser error: %v, %v", err, m)
+		return
+	}
+	err = addScores([]Score{*score})
+	if err != nil {
+		logPrintln("addScores error: %v, %v", err, m)
+		return
+	}
+	streak, err := GetStreakByUserAndGame(score.Username, score.Game)
+	if err != nil {
+		logPrintln("GetStreakByUserAndGame error: %v, %v", err, m)
+		streak = &GameStreak{}
+	}
+	logPrintln("Added score from bot: %s %s %s %s (streak: %d, %d)", score.Username, score.Game, score.GameNumber, score.Score, streak.Current, streak.Longest)
+	dc.startChannelMonitor(m.ChannelID)
+}
+
 func (dc *DiscordConnection) enableCommand(name string, description string, handler func(s *discordgo.Session, i *discordgo.InteractionCreate)) (ccmd *discordgo.ApplicationCommand, err error) {
 	cmd := discordgo.ApplicationCommand{
 		Name:        name,
@@ -320,30 +346,7 @@ func (dc *DiscordConnection) startDiscordMonitor() error {
 	dc.Session.Identify.Intents = discordgo.IntentGuilds | discordgo.IntentsGuildMessages
 	logPrintln("Starting monitor...")
 	// Called when a message is created in a channel
-	dc.Session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		err := dc.channelTick(m.ChannelID)
-		if err != nil {
-			logPrintln("channelTick error: %v, %v", err, m)
-			return
-		}
-		score, err := ParseScoreFromMessage(m.Message)
-		if err != nil {
-			logPrintln("Parser error: %v, %v", err, m)
-			return
-		}
-		err = addScores([]Score{*score})
-		if err != nil {
-			logPrintln("addScores error: %v, %v", err, m)
-			return
-		}
-		streak, err := GetStreakByUserAndGame(score.Username, score.Game)
-		if err != nil {
-			logPrintln("GetStreakByUserAndGame error: %v, %v", err, m)
-			streak = &GameStreak{}
-		}
-		logPrintln("Added score from bot: %s %s %s %s (streak: %d, %d)", score.Username, score.Game, score.GameNumber, score.Score, streak.Current, streak.Longest)
-		dc.startChannelMonitor(m.ChannelID)
-	})
+	dc.Session.AddHandler(dc.onDiscordMessageCreate)
 	dc.onDiscordConnectionClose(func() error {
 		logPrintln("Stopping monitor...")
 		return nil
