@@ -143,6 +143,14 @@ func TestScoreParser(t *testing.T) {
 			input:  "Tango #336 | 1:05 and flawless First 5 placements: 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 5️⃣🟨4️⃣3️⃣1️⃣2️⃣ 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 lnkd.in/tango.",
 			output: Score{Game: "Tango", Score: "65.00", GameNumber: "336", Win: "Y"},
 		},
+		{
+			input:  "Gerrymandle #172\nWon the election in 7:33!\n💎🏆 Perfect game\n\nhttps://gerrymandle.com/day/172",
+			output: Score{Game: "Gerrymandle", Score: "453.00", GameNumber: "172", Win: "Y"},
+		},
+		{
+			input:  "Gerrymandle #170\nTied for first in 0:46.\n🔍 Used 3 hints\n\nhttps://gerrymandle.com/day/170",
+			output: Score{Game: "Gerrymandle", Score: "46.00", GameNumber: "170", Win: "N"},
+		},
 	}
 	for _, item := range data {
 		score, err := ParseScoreFromContent(item.input)

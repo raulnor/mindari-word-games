@@ -48,6 +48,7 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		regexp.MustCompile(`(?s)(?P<game>Queens) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Tango) #(?P<game_no>\d+) \| (?P<score>[\d:.]+).*`),
 		regexp.MustCompile(`(?s)(?P<game>Queens Ultimate - Daily (?:Max|Mini)) #(?P<game_no>\d+)\n⏱️ (?P<score>[\d:.]+)`),
+		regexp.MustCompile(`(?s)(?P<game>Gerrymandle) #(?P<game_no>\d+)\s*[A-Za-z ]+ (?P<score>[\d:.]+).*`),
 	}
 	var captures map[string]string
 	for _, re := range patterns {
@@ -143,6 +144,18 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		}
 		score_value = strconv.FormatFloat(duration, 'f', 2, 64)
 		win = "Y"
+	case game == "Gerrymandle":
+		duration, err := parseSecondsFromString(score_value)
+		if err != nil {
+			score_value = ""
+			break
+		}
+		if strings.Contains(content, "Won") {
+			win = "Y"
+		} else {
+			win = "N"
+		}
+		score_value = strconv.FormatFloat(duration, 'f', 2, 64)
 	}
 	if game == "" {
 		score_value = ""
@@ -197,8 +210,10 @@ func ParseScores(messages []*discordgo.Message) ([]Score, error) {
 	return scores, nil
 }
 
-var parseDurationRegex = regexp.MustCompile(`(\d+):(\d+\.?\d*)`)
-var ErrNotDuration = errors.New("input is not a duration")
+var (
+	parseDurationRegex = regexp.MustCompile(`(\d+):(\d+\.?\d*)`)
+	ErrNotDuration     = errors.New("input is not a duration")
+)
 
 func parseSecondsFromString(input string) (float64, error) {
 	match := parseDurationRegex.FindStringSubmatch(input)
