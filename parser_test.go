@@ -93,39 +93,39 @@ func TestScoreParser(t *testing.T) {
 		},
 		{
 			input:  "Zip #175 | 0:11 🏁\nWith 1 backtrack 🛑\nlnkd.in/zip.",
-			output: Score{Game: "Zip", Score: "11.00", GameNumber: "175", Win: "Y"},
+			output: Score{Game: "Zip", Time: 11, GameNumber: "175", Win: "Y"},
 		},
 		{
 			input:  "Zip #176 | 0:10 and flawless 🏁\nWith no backtracks 🟢\nlnkd.in/zip.",
-			output: Score{Game: "Zip", Score: "10.00", GameNumber: "176", Win: "Y"},
+			output: Score{Game: "Zip", Time: 10, GameNumber: "176", Win: "Y"},
 		},
 		{
 			input:  "Zip #176 | 1:43 🏁\nlnkd.in/zip.",
-			output: Score{Game: "Zip", Score: "103.00", GameNumber: "176", Win: "Y"},
+			output: Score{Game: "Zip", Time: 103, GameNumber: "176", Win: "Y"},
 		},
 		{
 			input:  "Mini Sudoku #28 | 0:54 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
-			output: Score{Game: "Mini Sudoku", Score: "54.00", GameNumber: "28", Win: "Y"},
+			output: Score{Game: "Mini Sudoku", Time: 54, GameNumber: "28", Win: "Y"},
 		},
 		{
 			input:  "Mini Sudoku #31 | 3:16 and flawless ✏️\nThe classic game, made mini. Handcrafted by the originators of \"Sudoku.\"\nlnkd.in/minisudoku.",
-			output: Score{Game: "Mini Sudoku", Score: "196.00", GameNumber: "31", Win: "Y"},
+			output: Score{Game: "Mini Sudoku", Time: 196, GameNumber: "31", Win: "Y"},
 		},
 		{
 			input:  "👑 Queens Ultimate - Daily Mini #275\n⏱️ 01:00.25 | 💎 Brilliant\n\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟧🟧🟧\n🟪🟪🟪🟪⬜🟧\n🟩🟦🟪🟥⬜🟧\n🟩🟦🟪🟥🟥🟧\n🟩🟩🟪🟪🟪🟪\n\nCan you beat my time?\nqueensultimate.com/",
-			output: Score{Game: "Queens Ultimate - Daily Mini", Score: "60.25", GameNumber: "275", Win: "Y"},
+			output: Score{Game: "Queens Ultimate - Daily Mini", Time: 60.25, GameNumber: "275", Win: "Y"},
 		},
 		{
 			input:  "👑 Queens Ultimate - Daily Max #275\n⏱️ 03:10.07 | 💎 Brilliant\n\n🟪🟪🟪🟪🟪🟪\n🟦🟦🟪🟧🟪🟪\n🟦🟦🟧🟧🟪🟪\n🟥🟦🟧🟧🟧🟪\n🟥⬜⬜🟩🟩🟪\n🟥⬜🟩🟩🟩🟪\n\nCan you beat my time?\nqueensultimate.com/max",
-			output: Score{Game: "Queens Ultimate - Daily Max", Score: "190.07", GameNumber: "275", Win: "Y"},
+			output: Score{Game: "Queens Ultimate - Daily Max", Time: 190.07, GameNumber: "275", Win: "Y"},
 		},
 		{
 			input:  "Crossclimb #497 | 0:59 Fill order: 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 🔼 🔽 🪜 lnkd.in/crossclimb.",
-			output: Score{Game: "Crossclimb", Score: "59.00", GameNumber: "497", Win: "Y"},
+			output: Score{Game: "Crossclimb", Time: 59, GameNumber: "497", Win: "Y"},
 		},
 		{
 			input:  "Crossclimb #496 | 1:21 Fill order: 2️⃣ 1️⃣ 3️⃣ 5️⃣ 4️⃣ 🔼 🔽 🪜 lnkd.in/crossclimb.",
-			output: Score{Game: "Crossclimb", Score: "81.00", GameNumber: "496", Win: "Y"},
+			output: Score{Game: "Crossclimb", Time: 81, GameNumber: "496", Win: "Y"},
 		},
 		{
 			input:  "Pinpoint #497 | 3 guesses 1️⃣ | 4% match 2️⃣ | 4% match 3️⃣ | 100% match 📌 lnkd.in/pinpoint.",
@@ -137,19 +137,19 @@ func TestScoreParser(t *testing.T) {
 		},
 		{
 			input:  "Queens #496 | 1:05 and flawless First 👑s: 🟧 ⬜ 🟦 lnkd.in/queens.",
-			output: Score{Game: "Queens", Score: "65.00", GameNumber: "496", Win: "Y"},
+			output: Score{Game: "Queens", Time: 65, GameNumber: "496", Win: "Y"},
 		},
 		{
 			input:  "Tango #336 | 1:05 and flawless First 5 placements: 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 5️⃣🟨4️⃣3️⃣1️⃣2️⃣ 🟨🟨🟨🟨🟨🟨 🟨🟨🟨🟨🟨🟨 lnkd.in/tango.",
-			output: Score{Game: "Tango", Score: "65.00", GameNumber: "336", Win: "Y"},
+			output: Score{Game: "Tango", Time: 65, GameNumber: "336", Win: "Y"},
 		},
 		{
 			input:  "Gerrymandle #172\nWon the election in 7:33!\n💎🏆 Perfect game\n\nhttps://gerrymandle.com/day/172",
-			output: Score{Game: "Gerrymandle", Score: "453.00", GameNumber: "172", Win: "Y"},
+			output: Score{Game: "Gerrymandle", Time: 453, GameNumber: "172", Win: "Y"},
 		},
 		{
 			input:  "Gerrymandle #170\nTied for first in 0:46.\n🔍 Used 3 hints\n\nhttps://gerrymandle.com/day/170",
-			output: Score{Game: "Gerrymandle", Score: "46.00", GameNumber: "170", Win: "N"},
+			output: Score{Game: "Gerrymandle", Time: 46, GameNumber: "170", Win: "N"},
 		},
 	}
 	for _, item := range data {
@@ -160,14 +160,17 @@ func TestScoreParser(t *testing.T) {
 		if score.Game != item.output.Game {
 			t.Fatalf("TestScoreParser [Game]\n%s\nReturned:\n%s\nExpected:\n%s", item.input, score.Game, item.output.Game)
 		}
-		if score.Score != item.output.Score {
-			t.Fatalf("TestScoreParser [Score]\n%s\nReturned:\n%s\nExpected:\n%s", item.input, score.Score, item.output.Score)
-		}
 		if score.GameNumber != item.output.GameNumber {
 			t.Fatalf("TestScoreParser [GameNumber]\n%s\nReturned:\n%s\nExpected:\n%s", item.input, score.GameNumber, item.output.GameNumber)
 		}
 		if score.Hardmode != item.output.Hardmode {
 			t.Fatalf("TestScoreParser [Hardmode]\n%s\nReturned:\n%s\nExpected:\n%s", item.input, score.Hardmode, item.output.Hardmode)
+		}
+		if score.Score != item.output.Score {
+			t.Fatalf("TestScoreParser [Score]\n%s\nReturned:\n%s\nExpected:\n%s", item.input, score.Score, item.output.Score)
+		}
+		if score.Time != item.output.Time {
+			t.Fatalf("TestScoreParser [Time]\n%s\nReturned:\n%f\nExpected:\n%f", item.input, score.Time, item.output.Time)
 		}
 		if score.Win != item.output.Win {
 			t.Fatalf("TestScoreParser [Win]\n%s\nReturned:\n%s\nExpected:\n%s", item.input, score.Win, item.output.Win)

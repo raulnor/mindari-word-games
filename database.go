@@ -22,10 +22,11 @@ func initDatabase() (*sql.DB, error) {
 			game TEXT,
 			game_number TEXT,
 			score TEXT,
+			time REAL,
 			win TEXT,
 			hardmode TEXT,
 			content TEXT,
-			UNIQUE (username, game, game_number, score)
+			UNIQUE (id, username, game, game_number)
 		)
 	`)
 	if err != nil {
@@ -77,8 +78,8 @@ func addScores(scores []Score) error {
 		return err
 	}
 	score_stmt, err := db.Prepare(`
-		INSERT OR REPLACE INTO scores (id, channel_id, username, game, game_number, score, win, hardmode, content)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT OR REPLACE INTO scores (id, channel_id, username, game, game_number, score, time, win, hardmode, content)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to prepare score statement: %v", err)
@@ -101,7 +102,7 @@ func addScores(scores []Score) error {
 		if score.Game == "Unknown" {
 			score.GameNumber = score.ID
 		}
-		_, err := tx.Stmt(score_stmt).Exec(score.ID, score.ChannelID, score.Username, score.Game, score.GameNumber, score.Score, score.Win, score.Hardmode, score.Content)
+		_, err := tx.Stmt(score_stmt).Exec(score.ID, score.ChannelID, score.Username, score.Game, score.GameNumber, score.Score, score.Time, score.Win, score.Hardmode, score.Content)
 		if err != nil {
 			tx.Rollback()
 			return fmt.Errorf("failed to add score %s: %v", score.ID, err)
@@ -165,7 +166,7 @@ func GetRecentScores() ([]Score, error) {
 		return nil, err
 	}
 	sql := `
-		SELECT id, channel_id, username, game, game_number, score, win, hardmode
+		SELECT id, channel_id, username, game, game_number, score, time, win, hardmode
 		FROM scores
 		ORDER BY id DESC
 		LIMIT 5
@@ -186,6 +187,7 @@ func GetRecentScores() ([]Score, error) {
 			&score.Game,
 			&score.GameNumber,
 			&score.Score,
+			&score.Time,
 			&score.Win,
 			&score.Hardmode,
 		)
@@ -283,7 +285,7 @@ func getScoresByUser(game string, username string, from string, to string) ([]Sc
 		return nil, err
 	}
 	sql := `
-		SELECT id, channel_id, username, s.game, s.game_number, score, win, hardmode
+		SELECT id, channel_id, username, s.game, s.game_number, score, time, win, hardmode
 		FROM scores s
 		JOIN puzzles p
 			ON s.game = p.game AND s.game_number = p.game_number
@@ -306,6 +308,7 @@ func getScoresByUser(game string, username string, from string, to string) ([]Sc
 			&score.Game,
 			&score.GameNumber,
 			&score.Score,
+			&score.Time,
 			&score.Win,
 			&score.Hardmode,
 		)
@@ -431,7 +434,7 @@ func getScoresByDate(date string) ([]Score, error) {
 		return nil, err
 	}
 	sql := `
-		SELECT id, channel_id, username, s.game, score
+		SELECT id, channel_id, username, s.game, score, time
 		FROM scores s
 		JOIN puzzles p ON s.game = p.game AND s.game_number = p.game_number
 		WHERE p.date = ? AND p.game <> 'Unknown'
@@ -451,6 +454,7 @@ func getScoresByDate(date string) ([]Score, error) {
 			&score.Username,
 			&score.Game,
 			&score.Score,
+			&score.Time,
 		)
 		if err != nil {
 			return nil, err

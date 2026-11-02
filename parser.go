@@ -18,6 +18,7 @@ type Score struct {
 	GameNumber string
 	Score      string
 	Win        string
+	Time       float64
 	Hardmode   string
 	Content    string
 }
@@ -33,6 +34,7 @@ func ParseScoreFromContent(content string) (*Score, error) {
 	hardmode := ""
 	win := ""
 	score_value := lines[0]
+	duration := 0.0
 	patterns := []*regexp.Regexp{
 		regexp.MustCompile(`(?s)(?P<game>Wordle) (?P<game_no>[\d,]+) (?P<score>\w)\/6(?P<hardmode>[*]?)`),
 		regexp.MustCompile(`(?s)(?P<game>[A-Za-z ]*Dordle) (?P<game_no>\d+) (?P<left>\w)[&](?P<right>\w)\/7`),
@@ -137,25 +139,27 @@ func ParseScoreFromContent(content string) (*Score, error) {
 			win = "Y"
 		}
 	case game == "Zip" || game == "Mini Sudoku" || game == "Crossclimb" || game == "Queens" || game == "Tango" || strings.Contains(game, "Queens Ultimate"):
-		duration, err := parseSecondsFromString(score_value)
+		_duration, err := parseSecondsFromString(score_value)
+		score_value = ""
 		if err != nil {
-			score_value = ""
 			break
 		}
-		score_value = strconv.FormatFloat(duration, 'f', 2, 64)
+		score_value = ""
+		duration = _duration
 		win = "Y"
 	case game == "Gerrymandle":
-		duration, err := parseSecondsFromString(score_value)
+		_duration, err := parseSecondsFromString(score_value)
+		score_value = ""
 		if err != nil {
-			score_value = ""
 			break
 		}
+		score_value = ""
+		duration = _duration
 		if strings.Contains(content, "Won") {
 			win = "Y"
 		} else {
 			win = "N"
 		}
-		score_value = strconv.FormatFloat(duration, 'f', 2, 64)
 	}
 	if game == "" {
 		score_value = ""
@@ -167,6 +171,7 @@ func ParseScoreFromContent(content string) (*Score, error) {
 		GameNumber: game_no,
 		Hardmode:   hardmode,
 		Score:      score_value,
+		Time:       duration,
 		Win:        win,
 		Content:    content,
 	}
